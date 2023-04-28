@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:body>
+    <ui:composition template="templates/layout.xhtml">
+        <ui:define name="header">
+            <span>Домашний тир</span>
+        </ui:define>
+        <ui:define name="content">
+            <h:outputScript library="js" name="app.js"/>
+            <div class="framedBlock">
+                <canvas id="plot" width="300px" height="300px"/>
+            </div>
+            <div id="errorBlock" class="framedBlock"> ERROR</div>
+            <div class="framedBlock">
+                <h:form id="xyrForm">
+                    <h:inputText id="hiddenX" value="#{storyBean.currPoint.x}"/>
+                    <h:inputText id="hiddenR" value="#{storyBean.currPoint.r}"/>
+                    <div>
+                        <h:outputLabel value="X:"/>
+                        <ui:repeat var="currX" value="#{xRFormValuesBean.xValues}">
+                            <div>
+                                <h:commandLink name="x" value="#{currX}" action="#{storyBean.currPoint.setX(currX)}">
+                                    <f:setPropertyActionListener target="#{storyBean.currPoint.x}"
+                                                                 value="#{currX}"/>
+                                    <f:ajax execute="xyrForm" render="xyrForm"/>
+                                </h:commandLink>
+                            </div>
+                        </ui:repeat>
+                    </div>
+                    <div>
+                        <h:outputLabel for="y" value="Y:"/>
+                        <h:inputText id="y" value="#{storyBean.currPoint.y}"/>
+                    </div>
+                    <div>
+                        <h:outputLabel value="R:"/>
+                        <ui:repeat var="currR" value="#{xRFormValuesBean.rValues}">
+                            <div>
+                                <h:commandButton name="r" value="#{currR}">
+                                    <f:setPropertyActionListener target="#{storyBean.currPoint.r}"
+                                                                 value="#{currR}"/>
+                                    <f:ajax execute="xyrForm" render="xyrForm"/>
+                                </h:commandButton>
+                            </div>
+                        </ui:repeat>
+                    </div>
+                    <h:commandButton id="submit" value="Попытать удачу" action="#{storyBean.addPoint()}">
+                        <f:ajax execute="xyrForm" render="pointsTable xyrForm"/>
+                    </h:commandButton>
+                </h:form>
+            </div>
+            <div class="framedBlock">
+                <h:panelGroup id="pointsTable">
+                    <h:dataTable value="#{storyBean.points}" var="point">
+                        <h:column>
+                            <f:facet name="header">X</f:facet>
+                            <div name="xColumn">#{point.x}</div>
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">Y</f:facet>
+                            <div name="yColumn">#{point.y}</div>
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">R</f:facet>
+                            <div name="rColumn">#{point.r}</div>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Result</f:facet>
+                            <div name="resultColumn">#{point.result}</div>
+                        </h:column>
+                    </h:dataTable>
+                </h:panelGroup>
+            </div>
+        </ui:define>
+        <ui:define name="footer">
+            <h:button value="Перейти на стартовую страницу приложения" outcome="gotoStart"/>
+        </ui:define>
+    </ui:composition>
+</h:body>
+</html>
